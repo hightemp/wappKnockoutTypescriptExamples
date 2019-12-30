@@ -12,7 +12,7 @@
   "dependencies": {
     "@types/jquery": "^3.3.31",
     "@types/knockout": "^3.4.66",
-    "jquery": "^1.9.1",
+    "jquery": "^3.4.0",
     "knockout": "^2.3.0",
     "typescript": "^3.7.4"
   }
