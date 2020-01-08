@@ -4,16 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "for i in $(ls -d *); do cd $i; npm run build; cd -; done",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@types/jquery": "^3.3.31",
-    "@types/knockout": "^3.4.66",
-    "jquery": "^1.9.1",
-    "knockout": "^2.3.0",
-    "typescript": "^3.7.4"
-  }
+  "dependencies": {}
 }

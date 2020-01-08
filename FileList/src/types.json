@@ -1,0 +1,32 @@
+[
+    {
+        "name": "test1",
+        "title": "Описание группы 1",
+        "type": ["test1"]        
+    },
+    {
+        "name": "test2",
+        "title": "Описание группы 2",
+        "type": ["test2", "test2.2"]        
+    },
+    {
+        "name": "test3",
+        "title": "Описание группы 3",
+        "type": ["test3"]        
+    },
+    {
+        "name": "test4",
+        "title": "Описание группы 4",
+        "type": ["test4"]        
+    },
+    {
+        "name": "test5",
+        "title": "Описание группы 5",
+        "type": ["test5"]        
+    },
+    {
+        "name": "test6",
+        "title": "Описание группы 6",
+        "type": ["test6"]        
+    }
+]

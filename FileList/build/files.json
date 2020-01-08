@@ -1,0 +1,17 @@
+[
+    {
+        "path": "./files/1/file1.png",
+        "type": "test1",
+        "date": "10.10.1990 10:20"
+    },
+    {
+        "path": "./files/2/file2.jpeg",
+        "type": "test2",
+        "date": "10.12.2003 11:20"
+    },
+    {
+        "path": "./files/3/file3.jpg",
+        "type": "test3",
+        "date": "10.11.2010 12:20"
+    }
+]

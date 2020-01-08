@@ -9,26 +9,137 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js'></script>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/css/bootstrap.min.css'/>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/bootstrap.min.js'></script>
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/2.0/font-awesome.min.css'/>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css'/>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js'></script>
 </head>
 <body>
 
-    <ul>
-        <li data-bind="foreach: aFilesList">
-            <div class="btn-group">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fas fa-align-justify"></i>
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li data-bind="foreach: aFilesTypes">
-                        <a href="#" data-bind="text: sName">
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-    </ul>
+    <div id="files-list" style="display:none">
+        <form class="form-inline">
+            <fieldset>
+                <input 
+                    placeholder="Filter..."
+                    type="text" 
+                    data-bind="value: $root.sFilterText"
+                >
+            </fieldset>
+        </form>
+        <ul class="list-group">
+            <!-- ko foreach: aGroupedFilesByTypes -->
+                <li 
+                    class="list-group-item row-fluid files-group-title closed" 
+                    data-bind="event: { click: function() { $root.fnToggleGroup($data.oType.name) } }, attr: { id: 'files-group-title-'+$data.oType.name }"
+                >
+                    <div class="span5">
+                        <a data-bind="text:oType.name+' ('+aFiles.length+')'"></a>
+                    </div>
+                    <div class="span5">
+                        <span data-bind="text:$root.fnFormatUnixTime(oType.iLastModified)"></spandata-bind="text:>
+                    </div>
+                </li>
+                <div 
+                    style="display:none"
+                    data-bind="foreach: aFiles, attr: { id: 'files-group-block-'+$data.oType.name }"
+                >
+                    <li 
+                        class="list-group-item"
+                    >
+                        <div class="lgi-checkbox">
 
+                        </div>
+                        <div class="lgi-sign">
+
+                        </div>
+
+                        <div class="btn-group">
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fas fa-align-justify"></i>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li data-bind="foreach: aFilesTypes">
+                                    <a href="#" data-bind="text: name">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="lgi-image">
+                            <img data-bind="attr: { src: path}">
+                        </div>
+                        <div 
+                            class="lgi-file-name"
+                        >
+                            <a 
+                                data-bind="attr:{ href: path },text: path"
+                            >
+                            </a>
+                        </div>
+                        <div class="lgi-delete-button">
+
+                        </div>
+                    </li>
+                </div>
+            <!-- /ko -->
+        </ul>
+    </div>
+
+    <script src="build/FilesList.release.js"></script>
 </body>
+<style>
+#files-list {
+    padding: 10px;
+}
+[class*=lgi-] {
+    flex: 1;
+    padding: 5px;
+}
+.list-group-item {
+    display: flex !important;
+}
+.list-group {
+    margin-left: 0px;
+}
+.list-group [class*=span] {
+    min-height: auto !important;
+}
+.files-group-title span {
+    color: #aaa;
+}
+.files-group-title a {
+    text-decoration: none;  
+    cursor: pointer; 
+}
+.files-group-title a::before {
+    content: "⯆";
+    margin-right: 10px;
+}
+.files-group-title.closed a::before {
+    content: "⯈";
+    margin-right: 10px;
+}
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: .75rem 1.25rem;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.125);
+}
+.list-group, .list-group *, ::after, ::before {
+    box-sizing: border-box;
+}
+.list-group {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+dl, ol, ul {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+</style>
 </html>
