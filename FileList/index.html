@@ -20,7 +20,7 @@
                 <input 
                     placeholder="Фильтр..."
                     type="text" 
-                    data-bind="value: $root.sFilterText"
+                    data-bind="value: $root.sFilterText, valueUpdate: ['afterkeydown', 'input'], hasFocus: $root.m_bFilterTextHasFocus"
                 >
             </fieldset>
         </form>

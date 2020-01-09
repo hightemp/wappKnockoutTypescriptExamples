@@ -147,7 +147,8 @@ var FilesList = /** @class */ (function () {
                 var oFile = _c[_b];
                 var sFilterText = oThis.sFilterText;
                 if (sFilterText) {
-                    if (!!oThis.fnIsStringIncludeString(oFile.name, sFilterText)) {
+                    // console.log(oThis.fnIsStringIncludeString(oFile.name, sFilterText), oFile.name, sFilterText);
+                    if (!oThis.fnIsStringIncludeString(oFile.name, sFilterText)) {
                         continue;
                     }
                 }
@@ -187,9 +188,9 @@ var FilesList = /** @class */ (function () {
     };
     FilesList.prototype.fnRefresh = function () {
         var oThis = this;
+        oThis.fnGroupByTypes();
         ko.cleanNode(oThis.$oFilesListElement[0]);
         ko.applyBindings(oThis, oThis.$oFilesListElement[0]);
-        oThis.fnGroupByTypes();
     };
     __decorate([
         observable(aFilesTypes)
@@ -200,6 +201,9 @@ var FilesList = /** @class */ (function () {
     __decorate([
         observable("")
     ], FilesList.prototype, "sFilterText", void 0);
+    __decorate([
+        observable(false)
+    ], FilesList.prototype, "bFilterTextHasFocus", void 0);
     return FilesList;
 }());
 (function () {

@@ -58,6 +58,9 @@ class FilesList {
     @observable("")
     sFilterText: string;
 
+    @observable(false)
+    bFilterTextHasFocus: boolean;
+
     $oFilesListElement: JQuery;
 
     // @observable([], )
@@ -81,7 +84,7 @@ class FilesList {
         return iTimeStamp ? moment.unix(iTimeStamp).format('DD.MM.YYYY hh:mm') : '';
     }
 
-    fnIsStringIncludeString(sString1: string, sString2: string)
+    fnIsStringIncludeString(sString1: string, sString2: string): boolean
     {
         return !!~sString1.toLowerCase().indexOf(sString2.toLowerCase());
     }
@@ -102,10 +105,11 @@ class FilesList {
 
             oGroup.oType.iLastModified = 0;
 
-            for (var oFile of <any>oThis.aFiles) {
+            for (var oFile of oThis.aFiles) {
                 var sFilterText: string = oThis.sFilterText;
                 if (sFilterText) {
-                    if (!!oThis.fnIsStringIncludeString((<File>oFile).name, sFilterText)) {
+                    // console.log(oThis.fnIsStringIncludeString(oFile.name, sFilterText), oFile.name, sFilterText);
+                    if (!oThis.fnIsStringIncludeString(oFile.name, sFilterText)) {
                         continue;
                     }
                 }
@@ -162,12 +166,11 @@ class FilesList {
     fnRefresh()
     {
         var oThis = this;
-
-        
-        ko.cleanNode(oThis.$oFilesListElement[0]);
-        ko.applyBindings(oThis, oThis.$oFilesListElement[0]);
         
         oThis.fnGroupByTypes();
+
+        ko.cleanNode(oThis.$oFilesListElement[0]);
+        ko.applyBindings(oThis, oThis.$oFilesListElement[0]);        
     }
 }
 
