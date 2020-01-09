@@ -3,7 +3,7 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 
-var aFilesTypes = [
+var __aFilesTypes = [
 	{
 		name: "test1",
 		title: "Описание группы 1",
@@ -49,23 +49,35 @@ var aFilesTypes = [
 	}
 ];
 
-var aFiles = [
+var aFilesTypes = __aFilesTypes;
+
+var __aFiles = [
 	{
 		path: "./files/1/file1.png",
+		name: "file1.png",
 		type: "test1",
-		date: "10.10.1990 10:20"
+		date: "10.10.1990 10:20",
+		record_id: "1",
+		sign: true
 	},
 	{
 		path: "./files/2/file2.jpeg",
+		name: "file2.jpeg",
 		type: "test2",
-		date: "10.12.2003 11:20"
+		date: "10.12.2003 11:20",
+		record_id: "2",
+		sign: false
 	},
 	{
 		path: "./files/3/file3.jpg",
+		name: "file3.jpg",
 		type: "test3",
-		date: "10.11.2010 12:20"
+		date: "10.11.2010 12:20",
+		record_id: "3"
 	}
 ];
+
+var aFiles = __aFiles;
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -89,15 +101,24 @@ function observable(mDefaultValue) {
         });
         Object.defineProperty(target, key, {
             get: function () { return fnValue(); },
-            set: function (v) { return fnValue(v); },
+            set: function (v) {
+                console.log("setter", key, v);
+                fnValue(v);
+                // fnValue.valueHasMutated!();
+                //(<FilesList><unknown>target)
+                var oThis = this;
+                oThis.fnRefresh();
+            },
             enumerable: true
         });
     };
 }
 var FilesList = /** @class */ (function () {
     function FilesList() {
+        // @observable([], )
         this.aGroupedFilesByTypes = [];
         var oThis = this;
+        oThis.$oFilesListElement = $("#files-list");
         oThis.fnUpdateList();
     }
     FilesList.prototype.fnFormatDateTime = function (sDateTime) {
@@ -110,7 +131,9 @@ var FilesList = /** @class */ (function () {
         return !!~sString1.toLowerCase().indexOf(sString2.toLowerCase());
     };
     FilesList.prototype.fnGroupByTypes = function () {
+        console.log("fnGroupByTypes");
         var oThis = this;
+        oThis.aGroupedFilesByTypes = [];
         for (var _i = 0, _a = oThis.aFilesTypes; _i < _a.length; _i++) {
             var oFileType = _a[_i];
             var oGroup = {};
@@ -129,18 +152,40 @@ var FilesList = /** @class */ (function () {
                     if (oFile.date) {
                         oGroup.oType.iLastModified = Math.max(oGroup.oType.iLastModified, moment(oFile.date).unix());
                     }
+                    oFile.oFileType = oFileType;
                     oGroup.aFiles.push(oFile);
                 }
             }
             oThis.aGroupedFilesByTypes.push(oGroup);
         }
     };
-    FilesList.prototype.fnToggleGroup = function (sTypeName) {
-        $('#files-group-title-' + sTypeName).toggleClass('closed');
-        $('#files-group-block-' + sTypeName).toggle();
+    FilesList.prototype.fnToggleGroup = function (oFileType) {
+        oFileType.bOpened = !oFileType.bOpened;
+        $('#files-group-title-' + oFileType.name).toggleClass('closed');
+        $('#files-group-block-' + oFileType.name).toggle();
+    };
+    FilesList.prototype.fnChangeFileType = function (oFile, oFileType) {
+        console.log("fnChangeFileType", oFile, oFileType);
+    };
+    FilesList.prototype.fnDeleteFile = function (oFile) {
+        console.log("fnDeleteFile", oFile);
     };
     FilesList.prototype.fnUpdateList = function () {
         var oThis = this;
+        oThis.fnGroupByTypes();
+    };
+    FilesList.prototype.fnBind = function () {
+        var oThis = this;
+        if (!oThis.$oFilesListElement.length) {
+            return;
+        }
+        oThis.$oFilesListElement.show();
+        ko.applyBindings(oThis, oThis.$oFilesListElement[0]);
+    };
+    FilesList.prototype.fnRefresh = function () {
+        var oThis = this;
+        ko.cleanNode(oThis.$oFilesListElement[0]);
+        ko.applyBindings(oThis, oThis.$oFilesListElement[0]);
         oThis.fnGroupByTypes();
     };
     __decorate([
@@ -155,12 +200,6 @@ var FilesList = /** @class */ (function () {
     return FilesList;
 }());
 (function () {
-    var $oFilesListElement = $("#files-list");
-    if (!$oFilesListElement.length) {
-        return;
-    }
-    $oFilesListElement.show();
     var oFilesList = new FilesList();
-    console.log('aFiles', oFilesList.aFiles);
-    ko.applyBindings(oFilesList, $oFilesListElement[0]);
+    oFilesList.fnBind();
 })();

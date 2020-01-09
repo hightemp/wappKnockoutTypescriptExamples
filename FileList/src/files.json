@@ -1,17 +1,25 @@
 [
     {
         "path": "./files/1/file1.png",
+        "name": "file1.png",
         "type": "test1",
-        "date": "10.10.1990 10:20"
+        "date": "10.10.1990 10:20",
+        "record_id": "1",
+        "sign": true
     },
     {
         "path": "./files/2/file2.jpeg",
+        "name": "file2.jpeg",
         "type": "test2",
-        "date": "10.12.2003 11:20"
+        "date": "10.12.2003 11:20",
+        "record_id": "2",
+        "sign": false
     },
     {
         "path": "./files/3/file3.jpg",
+        "name": "file3.jpg",
         "type": "test3",
-        "date": "10.11.2010 12:20"
+        "date": "10.11.2010 12:20",
+        "record_id": "3"
     }
 ]

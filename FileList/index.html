@@ -14,41 +14,55 @@
 </head>
 <body>
 
-    <div id="files-list" style="display:none">
+    <script type="text/html" id="files-list-template">
         <form class="form-inline">
             <fieldset>
                 <input 
-                    placeholder="Filter..."
+                    placeholder="Фильтр..."
                     type="text" 
                     data-bind="value: $root.sFilterText"
                 >
             </fieldset>
         </form>
         <ul class="list-group">
-            <!-- ko foreach: aGroupedFilesByTypes -->
+            <!-- ko foreach: $root.aGroupedFilesByTypes -->
                 <li 
-                    class="list-group-item row-fluid files-group-title closed" 
-                    data-bind="event: { click: function() { $root.fnToggleGroup($data.oType.name) } }, attr: { id: 'files-group-title-'+$data.oType.name }"
+                    class="list-group-item row-fluid files-group-title" 
+                    data-bind="event: { click: $root.fnToggleGroup.bind($root, $data.oType) }, attr: { id: 'files-group-title-'+$data.oType.name }, css: { closed: !$data.oType.bOpened }"
                 >
                     <div class="span5">
                         <a data-bind="text:oType.name+' ('+aFiles.length+')'"></a>
                     </div>
                     <div class="span5">
-                        <span data-bind="text:$root.fnFormatUnixTime(oType.iLastModified)"></spandata-bind="text:>
+                        <span data-bind="text:$root.fnFormatUnixTime(oType.iLastModified)"></span>
                     </div>
                 </li>
                 <div 
-                    style="display:none"
-                    data-bind="foreach: aFiles, attr: { id: 'files-group-block-'+$data.oType.name }"
+                    class="files-group-block"
+                    data-bind="foreach: aFiles, attr: { id: 'files-group-block-'+$data.oType.name }, css: { closed: !$data.oType.bOpened }"
                 >
                     <li 
                         class="list-group-item"
                     >
                         <div class="lgi-checkbox">
-
+                            <input type="checkbox">
                         </div>
                         <div class="lgi-sign">
-
+                            <!-- ko if: $data.sign===true -->
+                                <div 
+                                    class="label label-warning"
+                                >подпись распознана</div>
+                            <!-- /ko -->
+                            <!-- ko if: $data.sign===false -->
+                            <div 
+                            class="label label-important"
+                        >подпись не распознана</div>
+                    <!-- /ko -->
+                        </div>
+                        <div class="lgi-date">
+                            <b 
+                                data-bind="text:$root.fnFormatDateTime(date)"
+                            ></b>
                         </div>
 
                         <div class="btn-group">
@@ -56,32 +70,48 @@
                                 <i class="fas fa-align-justify"></i>
                                 <span class="caret"></span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li data-bind="foreach: aFilesTypes">
-                                    <a href="#" data-bind="text: name">
+                            <ul 
+                                class="dropdown-menu"
+                                data-bind="foreach: aFilesTypes"
+                            >
+                                <li 
+                                    data-bind="css: { active: $parent.oFileType==$data }"
+                                >
+                                    <a href="#" data-bind="text: name, event: { click: $root.fnChangeFileType.bind($parent, $data) }">
                                     </a>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="lgi-image">
-                            <img data-bind="attr: { src: path}">
+                            <img
+                                style="width:50px" 
+                                data-bind="attr: { src: path}"
+                            >
                         </div>
                         <div 
                             class="lgi-file-name"
                         >
                             <a 
-                                data-bind="attr:{ href: path },text: path"
+                                data-bind="attr:{ href: path },text: name"
                             >
                             </a>
                         </div>
                         <div class="lgi-delete-button">
-
+                            <a 
+                                class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#"
+                                data-bind="event: { click: $root.fnDeleteFile.bind($data) }"
+                            >
+                                <i class="fas fa-trash"></i>
+                            </a>
                         </div>
                     </li>
                 </div>
             <!-- /ko -->
         </ul>
+    </script>
+
+    <div id="files-list" style="display:none" data-bind="template: { name: 'files-list-template', data: $root }">
     </div>
 
     <script src="build/FilesList.release.js"></script>
@@ -90,9 +120,22 @@
 #files-list {
     padding: 10px;
 }
+.dropdown-menu {
+    top: auto !important;
+}
+.files-group-block.closed {
+    display: none;
+}
 [class*=lgi-] {
     flex: 1;
     padding: 5px;
+}
+.lgi-delete-button,
+.lgi-checkbox {
+    flex: 0 0 auto;
+}
+.lgi-sign {
+    flex: 0 0 170px;
 }
 .list-group-item {
     display: flex !important;

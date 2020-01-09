@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import * as ko from 'knockout';
 import 'jquery/jquery';
 import moment from 'moment';
-import aFilesTypes from './types.json';
-import aFiles from './files.json';
+import { aFilesTypes } from './files_types';
+import { aFiles } from './files';
 function observable(mDefaultValue) {
     console.log('observable arguments', arguments);
     return function (target, key) {
@@ -25,15 +25,24 @@ function observable(mDefaultValue) {
         });
         Object.defineProperty(target, key, {
             get: function () { return fnValue(); },
-            set: function (v) { return fnValue(v); },
+            set: function (v) {
+                console.log("setter", key, v);
+                fnValue(v);
+                // fnValue.valueHasMutated!();
+                //(<FilesList><unknown>target)
+                var oThis = this;
+                oThis.fnRefresh();
+            },
             enumerable: true
         });
     };
 }
 var FilesList = /** @class */ (function () {
     function FilesList() {
+        // @observable([], )
         this.aGroupedFilesByTypes = [];
         var oThis = this;
+        oThis.$oFilesListElement = $("#files-list");
         oThis.fnUpdateList();
     }
     FilesList.prototype.fnFormatDateTime = function (sDateTime) {
@@ -46,7 +55,9 @@ var FilesList = /** @class */ (function () {
         return !!~sString1.toLowerCase().indexOf(sString2.toLowerCase());
     };
     FilesList.prototype.fnGroupByTypes = function () {
+        console.log("fnGroupByTypes");
         var oThis = this;
+        oThis.aGroupedFilesByTypes = [];
         for (var _i = 0, _a = oThis.aFilesTypes; _i < _a.length; _i++) {
             var oFileType = _a[_i];
             var oGroup = {};
@@ -65,18 +76,40 @@ var FilesList = /** @class */ (function () {
                     if (oFile.date) {
                         oGroup.oType.iLastModified = Math.max(oGroup.oType.iLastModified, moment(oFile.date).unix());
                     }
+                    oFile.oFileType = oFileType;
                     oGroup.aFiles.push(oFile);
                 }
             }
             oThis.aGroupedFilesByTypes.push(oGroup);
         }
     };
-    FilesList.prototype.fnToggleGroup = function (sTypeName) {
-        $('#files-group-title-' + sTypeName).toggleClass('closed');
-        $('#files-group-block-' + sTypeName).toggle();
+    FilesList.prototype.fnToggleGroup = function (oFileType) {
+        oFileType.bOpened = !oFileType.bOpened;
+        $('#files-group-title-' + oFileType.name).toggleClass('closed');
+        $('#files-group-block-' + oFileType.name).toggle();
+    };
+    FilesList.prototype.fnChangeFileType = function (oFile, oFileType) {
+        console.log("fnChangeFileType", oFile, oFileType);
+    };
+    FilesList.prototype.fnDeleteFile = function (oFile) {
+        console.log("fnDeleteFile", oFile);
     };
     FilesList.prototype.fnUpdateList = function () {
         var oThis = this;
+        oThis.fnGroupByTypes();
+    };
+    FilesList.prototype.fnBind = function () {
+        var oThis = this;
+        if (!oThis.$oFilesListElement.length) {
+            return;
+        }
+        oThis.$oFilesListElement.show();
+        ko.applyBindings(oThis, oThis.$oFilesListElement[0]);
+    };
+    FilesList.prototype.fnRefresh = function () {
+        var oThis = this;
+        ko.cleanNode(oThis.$oFilesListElement[0]);
+        ko.applyBindings(oThis, oThis.$oFilesListElement[0]);
         oThis.fnGroupByTypes();
     };
     __decorate([
@@ -91,13 +124,7 @@ var FilesList = /** @class */ (function () {
     return FilesList;
 }());
 (function () {
-    var $oFilesListElement = $("#files-list");
-    if (!$oFilesListElement.length) {
-        return;
-    }
-    $oFilesListElement.show();
     var oFilesList = new FilesList();
-    console.log('aFiles', oFilesList.aFiles);
-    ko.applyBindings(oFilesList, $oFilesListElement[0]);
+    oFilesList.fnBind();
 })();
 //# sourceMappingURL=FilesList.js.map
